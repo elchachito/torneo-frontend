@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crear Torneo</title>
+  <style>
+    body { font-family: sans-serif; max-width: 500px; margin: auto; padding: 20px; }
+    input, button { width: 100%; padding: 10px; margin: 5px 0; }
+    #equiposList { margin-top: 10px; }
+    .equipo-item { background: #eee; padding: 5px; margin: 3px 0; border-radius: 4px; }
+  </style>
+</head>
+<body>
+  <h1>Crear Torneo</h1>
+  <input type="text" id="nombreTorneo" placeholder="Nombre del torneo" />
+  <input type="text" id="equipoInput" placeholder="Nombre del equipo" />
+  <button onclick="agregarEquipo()">Agregar equipo</button>
+  <div id="equiposList"></div>
+  <button onclick="crearTorneo()">Crear Torneo</button>
+  <p id="resultado"></p>
+
+  <script>
+    const equipos = [];
+
+    function agregarEquipo() {
+      const nombre = document.getElementById('equipoInput').value.trim();
+      if (nombre) {
+        equipos.push(nombre);
+        document.getElementById('equipoInput').value = '';
+        mostrarEquipos();
+      }
+    }
+
+    function mostrarEquipos() {
+      const lista = document.getElementById('equiposList');
+      lista.innerHTML = '';
+      equipos.forEach(e => {
+        const div = document.createElement('div');
+        div.className = 'equipo-item';
+        div.textContent = e;
+        lista.appendChild(div);
+      });
+    }
+
+    async function crearTorneo() {
+      const nombre = document.getElementById('nombreTorneo').value.trim();
+      if (!nombre || equipos.length < 2) {
+        alert('Pon un nombre y al menos dos equipos');
+        return;
+      }
+
+      const res = await fetch('https://torneo-futbol-production.up.railway.app/api/torneos', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ nombre, equipos })
+      });
+
+      const data = await res.json();
+      if (data.url) {
+        document.getElementById('resultado').innerHTML = `
+          Torneo creado:<br>
+          <a href="${data.url}" target="_blank">${data.url}</a>
+        `;
+      } else {
+        document.getElementById('resultado').textContent = 'Error al crear el torneo';
+      }
+    }
+  </script>
+</body>
+</html>
