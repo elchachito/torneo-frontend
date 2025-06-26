@@ -59,7 +59,7 @@
         return;
       }
 
-      const res = await fetch('https://torneo-futbol-production.up.railway.app/api/torneos', {
+      const res = await fetch("https://torneo-futbol-production.up.railway.app/api/torneos", {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ nombre, equipos })
