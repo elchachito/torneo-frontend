@@ -10,16 +10,16 @@
     #equiposList { margin-top: 10px; }
     .equipo-item { background: #eee; padding: 5px; margin: 3px 0; border-radius: 4px; }
   </style>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2c3e50">
+  <script>
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.register("sw.js")
+        .then(() => console.log("✅ Service Worker registrado"))
+        .catch(err => console.error("❌ Error SW", err));
+    }
+  </script>
 </head>
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#2c3e50">
- <script>
-  if ("serviceWorker" in navigator) {
-    navigator.serviceWorker.register("sw.js")
-      .then(() => console.log("✅ Service Worker registrado"))
-      .catch(err => console.error("❌ Error SW", err));
-  }
-</script>
 <body>
   <h1>Crear Torneo</h1>
   <input type="text" id="nombreTorneo" placeholder="Nombre del torneo" />
@@ -58,32 +58,31 @@
         alert('Pon un nombre y al menos dos equipos');
         return;
       }
-  try {
-  const res = await fetch("https://torneo-futbol-production.up.railway.app/api/torneos", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ nombre, equipos }),
-  });
 
-  if (!res.ok) {
-    const text = await res.text();
-    alert("Error en backend: " + text);
-    return;
-  }
+      try {
+        const res = await fetch("https://torneo-futbol-production.up.railway.app/api/torneos", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ nombre, equipos }),
+        });
 
-  const data = await res.json();
-  alert("Torneo creado: " + data.enlace);
-} catch (error) {
-  alert("Error de red: " + error.message);
-}
-      const data = await res.json();
-      if (data.url) {
-        document.getElementById('resultado').innerHTML = `
-          Torneo creado:<br>
-          <a href="${data.url}" target="_blank">${data.url}</a>
-        `;
-      } else {
-        document.getElementById('resultado').textContent = 'Error al crear el torneo';
+        if (!res.ok) {
+          const text = await res.text();
+          alert("Error en backend: " + text);
+          return;
+        }
+
+        const data = await res.json();
+        if (data.enlace) {
+          document.getElementById('resultado').innerHTML = `
+            Torneo creado:<br>
+            <a href="${data.enlace}" target="_blank">${data.enlace}</a>
+          `;
+        } else {
+          document.getElementById('resultado').textContent = 'Error: respuesta sin enlace';
+        }
+      } catch (error) {
+        alert("Error de red: " + error.message);
       }
     }
   </script>
