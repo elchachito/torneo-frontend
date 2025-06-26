@@ -58,13 +58,24 @@
         alert('Pon un nombre y al menos dos equipos');
         return;
       }
+  try {
+  const res = await fetch("https://torneo-futbol-production.up.railway.app/api/torneos", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ nombre, equipos }),
+  });
 
-      const res = await fetch("https://torneo-futbol-production.up.railway.app/api/torneos", {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ nombre, equipos })
-      });
+  if (!res.ok) {
+    const text = await res.text();
+    alert("Error en backend: " + text);
+    return;
+  }
 
+  const data = await res.json();
+  alert("Torneo creado: " + data.enlace);
+} catch (error) {
+  alert("Error de red: " + error.message);
+}
       const data = await res.json();
       if (data.url) {
         document.getElementById('resultado').innerHTML = `
