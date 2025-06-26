@@ -11,6 +11,15 @@
     .equipo-item { background: #eee; padding: 5px; margin: 3px 0; border-radius: 4px; }
   </style>
 </head>
+<link rel="manifest" href="manifest.json">
+<meta name="theme-color" content="#2c3e50">
+ <script>
+  if ("serviceWorker" in navigator) {
+    navigator.serviceWorker.register("sw.js")
+      .then(() => console.log("✅ Service Worker registrado"))
+      .catch(err => console.error("❌ Error SW", err));
+  }
+</script>
 <body>
   <h1>Crear Torneo</h1>
   <input type="text" id="nombreTorneo" placeholder="Nombre del torneo" />
